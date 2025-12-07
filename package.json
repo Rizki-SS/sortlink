@@ -3,13 +3,17 @@
   "version": "1.0.50",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/index.ts",
+    "prisma-log:generate": "prisma generate --schema=./prisma/logs/schema.prisma",
+    "prisma-log:migrate": "prisma migrate dev --schema=./prisma/logs/schema.prisma"
   },
   "dependencies": {
-    "elysia": "latest"
+    "elysia": "latest",
+    "jose": "^6.1.2"
   },
   "devDependencies": {
-    "bun-types": "latest"
+    "bun-types": "latest",
+    "prisma": "^7.1.0"
   },
   "module": "src/index.js"
 }
