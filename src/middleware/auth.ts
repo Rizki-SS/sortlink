@@ -19,7 +19,6 @@ export const authMiddleware = new Elysia({ name: 'auth' })
 
       const { payload } = await jwtVerify(token, JWKS);
       
-      // Store user in Elysia's store for global access
       return {
         store: {
           user: payload

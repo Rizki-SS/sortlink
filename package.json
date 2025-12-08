@@ -8,6 +8,8 @@
     "prisma-log:migrate": "prisma migrate dev --schema=./prisma/logs/schema.prisma"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.1.0",
+    "@prisma/client": "^7.1.0",
     "elysia": "latest",
     "jose": "^6.1.2"
   },

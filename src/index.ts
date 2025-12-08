@@ -7,14 +7,12 @@ const app = new Elysia()
   .use(corsMiddleware)
   .use(loggingMiddleware)
   .get("/", () => ({
-    message: "Welcome to API Sortlink Services",
-    version: "1.0.50",
+    version: "1.0.0",
     endpoints: {
       health: "/api/health"
     }
   }))
   .use(routes)
-  // .use(adminModule)
   .all("*", ({ set, request }) => {
     set.status = 404;
     return {

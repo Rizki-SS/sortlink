@@ -2,7 +2,7 @@ import { Elysia } from "elysia";
 import { createBullBoard } from '@bull-board/api';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { ElysiaAdapter } from '@bull-board/elysia';
-import { videoEncodeQueue } from '../@modules/video/queue/videoEncodeWorker';
+import { videoEncodeQueue } from '../modules/video/queue/videoEncodeWorker';
 
 // Create a separate Elysia app for Bull Dashboard
 const createBullDashboard = () => {
