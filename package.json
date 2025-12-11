@@ -4,12 +4,22 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts",
+
+    "rebalance": "bun run src/cli/rebalance.ts",
+
     "prisma-log:generate": "prisma generate --schema=./prisma/logs/schema.prisma",
-    "prisma-log:migrate": "prisma migrate dev --schema=./prisma/logs/schema.prisma"
+    "prisma-log:migrate": "prisma migrate dev --schema=./prisma/logs/schema.prisma",
+    "prisma-main:generate": "prisma generate --schema=./prisma/main/schema.prisma",
+    "prisma-main:migrate": "prisma migrate dev --schema=./prisma/main/schema.prisma",
+
+    "prisma-db-link:generate": "prisma generate --schema=./prisma/db.links/schema.prisma",
+    "prisma-db-link-shard_1:migrate": "prisma migrate dev --config=./prisma/db.links/shard_1.prisma.config.ts",
+    "prisma-db-link-shard_2:migrate": "prisma migrate dev --config=./prisma/db.links/shard_2.prisma.config.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.1.0",
     "@prisma/client": "^7.1.0",
+    "crc-32": "^1.2.2",
     "elysia": "latest",
     "jose": "^6.1.2"
   },

@@ -22,7 +22,6 @@ export const loggingMiddleware = new Elysia()
   });
 
 export const errorHandler = ({ code, error, set, request }: any) => {
-  console.log('Error middleware triggered');
   const timestamp = new Date().toISOString();
   const method = request.method;
   const url = request.url;

@@ -13,39 +13,32 @@ datasource db {
   provider = "postgresql"
 }
 
-model Domain {
-  id        String   @id @default(cuid()) @map("_id")
-  name      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum DomainType {
+  PUBLIC
+  PRIVATE
 }
 
-model Link {
-  id        String   @id @default(cuid()) @map("_id")
-  hash      String   @unique
-  url       String
-  domainId  String  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([domainId])
+model domains {
+  id         String     @id @default(uuid()) @db.Uuid
+  name       String     @unique
+  userId     String
+  teamId     String?
+  type       DomainType @default(PUBLIC)
+  isVerified Boolean    @default(false)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
-model link_items {
-  id        String   @id @default(cuid()) @map("_id")
-  linkId    String   
-  item      String
+model links_shards {
+  id        String   @id @default(uuid()) @db.Uuid
+  hashId    String   @unique
+  domainId  String
+  shardKey  String
+  hashRange BigInt?
+  teamId    String?
+  userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([linkId])
-}
-
-model link_settings {
-  id        String   @id @default(cuid()) @map("_id")
-  linkId    String   @unique
-  setting   String
-  value     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@index([shardKey])
 }

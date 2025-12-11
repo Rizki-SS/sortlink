@@ -1,5 +1,6 @@
 import { jwtVerify, createRemoteJWKSet } from 'jose';
 import { Elysia } from 'elysia';
+import { UnauthorizedError } from '../types/errors';
 
 export const JWK_URL = process.env.JWK_URL || 'https://example.com/.well-known/jwks.json';
 
@@ -8,8 +9,7 @@ export const authMiddleware = new Elysia({ name: 'auth' })
     const authHeader = request.headers.get('Authorization');
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      set.status = 401;
-      throw new Error('Missing or invalid Authorization header');
+      throw new UnauthorizedError('Missing or invalid Authorization header');
     }
     
     const token = authHeader.replace('Bearer ', '');
@@ -25,7 +25,6 @@ export const authMiddleware = new Elysia({ name: 'auth' })
         }
       };
     } catch (err: Error | unknown) {
-      set.status = 401;
-      throw new Error(err instanceof Error ? err.message : 'Unknown error : Unauthorized');
+      throw new UnauthorizedError(err instanceof Error ? err.message : 'Invalid or expired token');
     }
   });

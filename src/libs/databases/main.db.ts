@@ -2,7 +2,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../../../prisma/src/generated/main/prisma/client";
 
 const adapter = new PrismaPg({
-    connectionString: process.env.PPG_USER_DATABASE_URL,
+    connectionString: process.env.DATABASE_URL,
 });
 
 const getPrisma = () => new PrismaClient({
@@ -14,6 +14,7 @@ const globalForMainDbClient = global as unknown as {
 };
 
 export const mainClient =
-    globalForMainDbClient.mainClient || getPrisma();    
+    globalForMainDbClient.mainClient || getPrisma(); 
+       
 if (process.env.NODE_ENV !== "production")
     globalForMainDbClient.mainClient = mainClient;
