@@ -32,9 +32,9 @@ export const errorResponse = (message: string, errors?: any) => ({
 });
 
 export const paginatedResponse = <T>(
-    data: T[], 
-    page: number, 
-    limit: number, 
+    data: T[],
+    page: number,
+    limit: number,
     total: number
 ) => ({
     success: true,

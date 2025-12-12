@@ -1,22 +1,42 @@
 import Elysia, { NotFoundError } from "elysia";
-import ClientDB from "@/libs/databases/indext";
 import { successResponse } from "@/libs/http/response";
 import { DomainQuery } from "@/shorlinks/repositories/prisma/domains.query";
-import { RepositoryFactory } from "@/libs/databases/repository.factory";
 import AppStore from "@/libs/type/store.user";
+import loader from "../../../../loader";
 
-export const domainFind = new Elysia()
-    .decorate("domainFactory", new RepositoryFactory(ClientDB))
-    .get("/:id", async ({ domainFactory, params, store }) => {
-        const domainQuery = domainFactory.createScopedRepository(
-            DomainQuery,
-            { teamId: (store as AppStore).user.selected_teamId }
-        );
+class DomainFindController {
+    constructor(
+        private domainQuery: DomainQuery
+    ) {
 
-        const domain = await domainQuery.findById(params.id);
+    }
+
+    async handle({ params }: {
+        params: { id: string }
+    }) {
+        const domain = await this.domainQuery.findById(params.id);
         if (!domain) {
             throw new NotFoundError('Domain not found');
         }
 
         return successResponse(domain);
+    }
+}
+
+const DomainFindFactory = ({ store, repositoryFactory }: any) => {
+    const domainQuery = repositoryFactory.createScopedRepository(
+        DomainQuery,
+        { teamId: (store as AppStore).user.selected_teamId }
+    );
+
+    return new DomainFindController(domainQuery);
+};
+
+export const domainFind = new Elysia()
+    .use(loader)
+    .decorate('domainFindFactory', DomainFindFactory)
+    .get("/:id", async ({ params, store, domainFindFactory, repositoryFactory }) => {
+        return await domainFindFactory({ store, repositoryFactory }).handle({
+            params
+        });
     });

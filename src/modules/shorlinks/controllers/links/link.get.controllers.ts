@@ -8,23 +8,27 @@ import { RepositoryFactory } from "@/libs/databases/repository.factory";
 import AppStore from "@/libs/type/store.user";
 import { LinkShardsQuery } from "@/shorlinks/repositories/prisma/linksShards.query";
 import { serializeBigInt } from "@/libs/utils/bigint.serializer";
+import loader from "../../../../loader";
 
-const applyDomainFilter = (where: any, query?: any) => 
+const applyDomainFilter = (where: any, query?: any) =>
     query?.domainId ? { ...where, domainId: query.domainId } : where;
 
-const applyHashFilter = (where: any, query?: any) => 
+const applyHashFilter = (where: any, query?: any) =>
     query?.hash ? { ...where, hash: query.hash } : where;
 
-const applySearchFilter = (where: any, query?: any) => 
+const applySearchFilter = (where: any, query?: any) =>
     query?.search ? { ...where, url: { contains: query.search } } : where;
 
-export const linkGet  = new Elysia()
-    .decorate("linkFactory", new RepositoryFactory(ClientDB))
-    .get("/", async ({ linkFactory, query, store }) => {
-        const repositories = linkFactory.createScopedRepository(LinkShardsQuery, {
-            teamId: (store as AppStore).user.selected_teamId
-        });
+class LinkGetController {
+    constructor(
+        private repositories: LinkShardsQuery
+    ) {
 
+    }
+
+    async handle({ query }: {
+        query: any
+    }) {
         const { page, limit, skip } = parsePagination(query);
         const { sortBy, sortOrder } = parseSorting(query);
         const where = buildWhereClause(query, [
@@ -33,16 +37,35 @@ export const linkGet  = new Elysia()
             applySearchFilter
         ]);
 
-        const { total, data } = await repositories.findWithPagination({
+        const { total, data } = await this.repositories.findWithPagination({
             where,
             skip,
             limit,
             sortBy,
             sortOrder
         });
-        
+
         return paginatedResponse(serializeBigInt(data), page, limit, total);
-    }, { 
+    }
+}
+
+const LinkGetFactory = ({ store, repositoryFactory }: any) => {
+    const repositories = repositoryFactory.createScopedRepository(LinkShardsQuery, {
+        teamId: (store as AppStore).user.selected_teamId
+    });
+
+    return new LinkGetController(repositories);
+};
+
+
+export const linkGet = new Elysia()
+    .use(loader)
+    .decorate('linkGetFactory', LinkGetFactory)
+    .get("/", async ({ query, store, linkGetFactory, repositoryFactory }) => {
+        return await linkGetFactory({ store, repositoryFactory }).handle({
+            query
+        });
+    }, {
         body: link,
         query: linkQuery
     });

@@ -1,11 +1,20 @@
-import Elysia from "elysia";
-import { linkServiceFactory } from "../../services/link.service.factory";
-import { LinkCreationSchema } from "../../requests/link.form";
+import Elysia, { Context } from "elysia";
+import { linkServiceFactory, LinkServiceFactory } from "../../services/link.service.factory";
+import { LinkCreation, LinkCreationSchema } from "../../requests/link.form";
 import { successResponse } from "@/libs/http/response";
+import AppStore from "@/libs/type/store.user";
 
-export const linkCreate = new Elysia()
-    .post("/", async ({ body, store }: any) => {
-        const service = linkServiceFactory.createService(
+class LinkCreateController {
+    constructor(
+        protected linkServiceFactory: LinkServiceFactory,
+    ) {
+
+    }
+    async handle({ body, store }: {
+        body: LinkCreation,
+        store: AppStore
+    }) {
+        const service = this.linkServiceFactory.createService(
             body.hash,
             store.user.sub,
             store.user.selected_teamId
@@ -18,7 +27,19 @@ export const linkCreate = new Elysia()
         );
 
         return successResponse(link);
-    }, {
+    }
+}
+
+const linkCreateFactory = new LinkCreateController(linkServiceFactory);
+
+const linkCreate = new Elysia()
+    .decorate('linkCreateFactory', linkCreateFactory)
+    .post("/", async ({ store, body, linkCreateFactory }) => await linkCreateFactory.handle({
+        store: store as AppStore,
+        body: body as unknown as LinkCreation
+    }), {
         body: LinkCreationSchema,
         store: true
     });
+
+export default linkCreate;

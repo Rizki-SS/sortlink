@@ -14,33 +14,79 @@ datasource db {
 }
 
 model links {
-  id        BigInt   @id @default(autoincrement())
-  hashId    String   @unique
-  url       String
-  domainId  String  
-  userId    String
-  teamId    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              BigInt             @id @default(autoincrement())
+  hashId          String             @unique
+  url             String
+  domainId        String  
+  note            String?
+  folderId        String?
+  userId          String
+  teamId          String?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  link_utm        link_utm?
+  link_geolocation link_geolocation?
+  link_ab_testing link_ab_testing?
+  link_protection link_protection?
+  link_preview    link_preview?
 
   @@index([domainId, hashId])
 }
 
-model link_items {
-  id        BigInt   @id @default(autoincrement())
-  linkId    String   
-  item      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([linkId])
+model link_utm {
+  id              BigInt   @id @default(autoincrement())
+  linkId          BigInt   @unique
+  utmSource       String?
+  utmMedium       String?
+  utmCampaign     String?
+  utmTerm         String?
+  utmContent      String?
+  referrer        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  link            links    @relation(fields: [linkId], references: [id])
 }
 
-model link_settings {
-  id        BigInt   @id @default(autoincrement())
-  linkId    String   @unique
-  setting   String
-  value     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model link_geolocation {
+  id              BigInt   @id @default(autoincrement())
+  linkId          BigInt   @unique
+  country         String?
+  url             String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  link            links    @relation(fields: [linkId], references: [id])
+}
+
+model link_ab_testing {
+  id              BigInt   @id @default(autoincrement())
+  linkId          BigInt   @unique
+  urls            String[]
+  started_at      DateTime?
+  expires_at      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  link            links    @relation(fields: [linkId], references: [id])
+}
+
+model link_protection {
+  id              BigInt   @id @default(autoincrement())
+  linkId          BigInt   @unique
+  started_at      DateTime?
+  expires_at      DateTime?
+  redirect_url    String?
+  password        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  link            links    @relation(fields: [linkId], references: [id])
+}
+
+model link_preview {
+  id              BigInt   @id @default(autoincrement())
+  linkId          BigInt   @unique
+  title           String?
+  description     String?
+  image           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  link            links    @relation(fields: [linkId], references: [id])
 }

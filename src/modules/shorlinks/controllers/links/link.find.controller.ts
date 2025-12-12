@@ -1,27 +1,30 @@
 import Elysia from "elysia";
-import ClientDB from "@/libs/databases/indext";
 import { successResponse } from "@/libs/http/response";
-import { DomainQuery } from "@/shorlinks/repositories/prisma/domains.query";
-import { RepositoryFactory } from "@/libs/databases/repository.factory";
 import { LinkShardsQuery } from "@/shorlinks/repositories/prisma/linksShards.query";
 import { LinkQuery } from "@/shorlinks/repositories/prisma/links.query";
+import AppStore from "@/libs/type/store.user";
+import loader from "../../../../loader";
 
-export const linkFind = new Elysia()
-    .decorate("linkFactory", new RepositoryFactory(ClientDB))
-    .get("/:id", async ({ linkFactory, params, store }) => {
-        const linkMetaRepo = linkFactory.createScopedRepository(
-            LinkShardsQuery,
-            { teamId: (store as any).user.selected_teamId }
-        );
-        
-        const link = await linkMetaRepo.findById(params.id);
+class LinkFindController {
+    constructor(
+        private linkMetaRepo: LinkShardsQuery,
+        private repositoryFactory: any
+    ) {
+
+    }
+
+    async handle({ params, store }: {
+        params: { id: string },
+        store: AppStore
+    }) {
+        const link = await this.linkMetaRepo.findById(params.id);
         if (!link) {
             throw new Error("Link not found");
         }
 
-        const linkRepo = linkFactory.createScopedRepository(
+        const linkRepo = this.repositoryFactory.createScopedRepository(
             LinkQuery,
-            { teamId: (store as any).user.selected_teamId },
+            { teamId: store.user.selected_teamId },
             'links',
             link.shardKey as string
         );
@@ -30,5 +33,25 @@ export const linkFind = new Elysia()
         return successResponse({
             ...link,
             detail: { ...fullLink }
+        });
+    }
+}
+
+const LinkFindFactory = ({ store, repositoryFactory }: any) => {
+    const linkMetaRepo = repositoryFactory.createScopedRepository(
+        LinkShardsQuery,
+        { teamId: (store as AppStore).user.selected_teamId }
+    );
+
+    return new LinkFindController(linkMetaRepo, repositoryFactory);
+};
+
+export const linkFind = new Elysia()
+    .use(loader)
+    .decorate('linkFindFactory', LinkFindFactory)
+    .get("/:id", async ({ params, store, linkFindFactory, repositoryFactory }) => {
+        return await linkFindFactory({ store, repositoryFactory }).handle({
+            params,
+            store: store as AppStore
         });
     });

@@ -26,10 +26,10 @@ const parseSorting = (query: any): { sortBy: string; sortOrder: 'asc' | 'desc' }
     sortOrder: ((query.sortOrder as string) || 'desc') as 'asc' | 'desc'
 });
 
-export { 
-    buildWhereClause, 
-    parsePagination, 
+export {
+    buildWhereClause,
+    parsePagination,
     parseSorting,
     PaginationParams,
-    filterByTeam
+    // filterByTeam
 };

@@ -1,27 +1,49 @@
 import Elysia from "elysia";
-import ClientDB from "@/libs/databases/indext";
 import { DomainMutate } from "@/shorlinks/repositories/prisma/domain.mutate";
 import domainCreateSchema from "@/shorlinks/requests/domain.form";
 import AppStore from "@/libs/type/store.user";
 import { successResponse } from "@/libs/http/response";
-import { RepositoryFactory } from "@/libs/databases/repository.factory";
+import loader from "../../../../loader";
 
-export const domainCreate = new Elysia()
-    .decorate("domainFactory", new RepositoryFactory(ClientDB))
-    .post("/", async ({ domainFactory, store, body }) => {
-        const domainMutate = domainFactory.createScopedRepository(
-            DomainMutate,
-            { teamId: (store as AppStore).user.selected_teamId }
-        );
+class DomainCreateController {
+    constructor(
+        private domainMutate: DomainMutate
+    ) {
 
-        const newLink = await domainMutate.create({
+    }
+
+    async handle({ body, store }: {
+        body: any,
+        store: AppStore
+    }) {
+        const newDomain = await this.domainMutate.create({
             name: body.name,
-            userId: (store as AppStore).user?.sub!,
-            teamId: (store as AppStore).user?.selected_teamId || null,
+            userId: store.user.sub,
+            teamId: store.user.selected_teamId || null,
             type: body.type,
         });
 
-        return successResponse(newLink);
+        return successResponse(newDomain);
+    }
+}
+
+const DomainCreateFactory = ({ store, repositoryFactory }: any) => {
+    const domainMutate = repositoryFactory.createScopedRepository(
+        DomainMutate,
+        { teamId: (store as AppStore).user.selected_teamId }
+    );
+
+    return new DomainCreateController(domainMutate);
+};
+
+export const domainCreate = new Elysia()
+    .use(loader)
+    .decorate('domainCreateFactory', DomainCreateFactory)
+    .post("/", async ({ body, store, domainCreateFactory, repositoryFactory }) => {
+        return await domainCreateFactory({ store, repositoryFactory }).handle({
+            body,
+            store: store as AppStore
+        });
     }, {
         body: domainCreateSchema
     });
