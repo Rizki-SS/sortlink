@@ -5,7 +5,12 @@ export class FolderQuery {
 
     async findById(id: string) {
         return this.client.links_folders.findUnique({
-            where: { id }
+            where: { id },
+            include: {
+                links: true,
+                children: true,
+                parent: true
+            }
         });
     }
 

@@ -12,7 +12,7 @@ export class LinkServiceFactory {
     constructor(
         private repoFactory: RepositoryFactory,
         private hashFactory: typeof ConsistentHashFactory
-    ) {}
+    ) { }
 
     createService(hash: string, userId: string, teamId?: string): LinkService {
         const shard = this.hashFactory.getNode(hash);

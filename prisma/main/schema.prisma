@@ -36,11 +36,13 @@ model links_shards {
   shardKey  String
   hashRange BigInt?
   teamId    String?
+  folderId  String?  @db.Uuid
   userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   linkTags link_rel_tags[]
+  folder   links_folders?  @relation(fields: [folderId], references: [id])
 
   @@index([shardKey])
 }
@@ -48,11 +50,16 @@ model links_shards {
 model links_folders {
   id        String   @id @default(uuid()) @db.Uuid
   name      String
-  parentId  String?
+  parentId  String?  @db.Uuid
   userId    String
   teamId    String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  parent   links_folders?  @relation("FolderHierarchy", fields: [parentId], references: [id])
+  children links_folders[] @relation("FolderHierarchy")
+
+  links links_shards[]
 }
 
 model link_tags {

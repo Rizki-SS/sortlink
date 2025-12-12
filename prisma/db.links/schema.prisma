@@ -19,7 +19,6 @@ model links {
   url             String
   domainId        String  
   note            String?
-  folderId        String?
   userId          String
   teamId          String?
   createdAt       DateTime           @default(now())
