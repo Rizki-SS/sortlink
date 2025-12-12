@@ -16,7 +16,7 @@ const parsePagination = (query: {
     skip?: string;
     limit?: string;
 }) => {
-    const skip = Math.max(1, parseInt(query.skip as string) || 1);
+    const skip = Math.max(0, parseInt(query.skip as string) || 0);
     const limit = Math.min(100, Math.max(1, parseInt(query.limit as string) || 10));
     const page = (skip - 1) * limit;
     return { page, limit, skip };

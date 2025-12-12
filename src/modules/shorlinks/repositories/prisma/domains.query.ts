@@ -2,10 +2,10 @@ import { PaginationParams } from "@/libs/utils/prisma.builder";
 import { PrismaClient, Prisma } from "../../../../../prisma/src/generated/main/prisma/client";
 
 export class DomainQuery {
-    constructor(private client: PrismaClient | any) {}
+    constructor(private client: PrismaClient | any) { }
 
     async findWithPagination({ where, skip, limit, sortBy, sortOrder }: PaginationParams) {
-        const [total, links] = await Promise.all([
+        const [total, domains] = await Promise.all([
             this.client.domains.count({ where }),
             this.client.domains.findMany({
                 where,
@@ -17,7 +17,7 @@ export class DomainQuery {
 
         return {
             total,
-            data: links
+            data: domains
         };
     }
 
