@@ -40,5 +40,40 @@ model links_shards {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  linkTags link_rel_tags[]
+
   @@index([shardKey])
+}
+
+model links_folders {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  parentId  String?
+  userId    String
+  teamId    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model link_tags {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  userId    String
+  teamId    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  links link_rel_tags[]
+}
+
+model link_rel_tags {
+  linkId String @db.Uuid
+  tagId  String @db.Uuid
+
+  link links_shards @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  tag  link_tags    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([linkId, tagId])
+  @@index([linkId])
+  @@index([tagId])
 }

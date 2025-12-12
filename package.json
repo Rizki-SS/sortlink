@@ -18,6 +18,8 @@
     "@prisma/client": "^7.1.0",
     "crc-32": "^1.2.2",
     "elysia": "latest",
+    "ioredis": "^5.8.2",
+    "ioredis-cache": "^2.0.3",
     "jose": "^6.1.2"
   },
   "devDependencies": {

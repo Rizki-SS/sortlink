@@ -1,5 +1,5 @@
 import ClientDB from "@/libs/databases/indext";
-import Elysia, { t } from "elysia";
+import Elysia, { Static, t } from "elysia";
 import linkQuery from "../../requests/links.query";
 import link from "../../data/link";
 import { paginatedResponse } from "@/libs/http/response";
@@ -27,7 +27,7 @@ class LinkGetController {
     }
 
     async handle({ query }: {
-        query: any
+        query: Static<typeof linkQuery>
     }) {
         const { page, limit, skip } = parsePagination(query);
         const { sortBy, sortOrder } = parseSorting(query);
