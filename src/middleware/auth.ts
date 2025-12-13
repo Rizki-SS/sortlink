@@ -1,5 +1,5 @@
 import { jwtVerify, createLocalJWKSet } from 'jose';
-import { redisClient } from '../modules/shorlinks/config/redis';
+import { redisClient } from '../config/redis';
 import { Elysia } from 'elysia';
 import { UnauthorizedError } from '../types/errors';
 

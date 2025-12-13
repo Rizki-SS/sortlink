@@ -7,6 +7,8 @@ import { linkGet } from "./controllers/links/link.get.controllers";
 import { linkFind } from "./controllers/links/link.find.controller";
 import { linkUpdate } from "./controllers/links/link.update.controller";
 import { linkDelete } from "./controllers/links/link.delete.controller";
+import { linkTagsAdd } from "./controllers/links/link.tags.add.controller";
+import { linkTagsRemove } from "./controllers/links/link.tags.remove.controller";
 import folderCreate from "./controllers/folders/folder.create.controllers";
 import { folderGet } from "./controllers/folders/folder.get.controller";
 import { folderFind } from "./controllers/folders/folder.find.controller";
@@ -18,6 +20,9 @@ export const routes = new Elysia()
     .use(authMiddleware)
     .group("/links", (app) =>
         app.use([linkGet, linkCreate, linkFind, linkUpdate, linkDelete])
+            .group("/:id/tags", (tagApp) =>
+                tagApp.use([linkTagsAdd, linkTagsRemove])
+            )
     )
     .group("/domains", (domainApp) =>
         domainApp.use([domainFetch, domainCreate, domainFind])

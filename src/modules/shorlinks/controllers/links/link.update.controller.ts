@@ -24,10 +24,7 @@ class LinkUpdateController {
 
         const link = await service.updateLink(
             params.id,
-            {
-                url: body.url,
-                domainId: body.domainId
-            }
+            body
         );
 
         return successResponse(link);

@@ -1,4 +1,4 @@
-import { t } from "elysia";
+import { redirect, t } from "elysia";
 
 const pagination = t.Object({
     page: t.Number(),
@@ -30,6 +30,8 @@ export const errorResponse = (message: string, errors?: any) => ({
     message,
     ...(errors && { errors })
 });
+
+export const redirectionResponse = (url: string) => redirect(url);
 
 export const paginatedResponse = <T>(
     data: T[],

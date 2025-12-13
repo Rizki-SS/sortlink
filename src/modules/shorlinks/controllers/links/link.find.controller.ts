@@ -17,7 +17,17 @@ class LinkFindController {
         params: { id: string },
         store: AppStore
     }) {
-        const link = await this.linkMetaRepo.findById(params.id);
+        const link = await this.linkMetaRepo.findById(params.id, {
+            include: {
+                linkTags: {
+                    include: {
+                        tag: true
+                    }
+                },
+                folder: true
+            }
+        });
+
         if (!link) {
             throw new Error("Link not found");
         }

@@ -1,9 +1,9 @@
 import { Elysia } from "elysia";
 import { healthRoutes } from "./health";
 import { linkRoutes } from "@/shorlinks";
-import { RepositoryFactory } from "@/libs/databases/repository.factory";
-import ClientDB from "@/libs/databases/indext";
 
-export const routes = new Elysia({ prefix: "/api" })
+const APP_PREFIX = process.env.APP_PREFIX || "/api";
+
+export const routes = new Elysia({ prefix: `${APP_PREFIX}` })
   .use(healthRoutes)
   .use(linkRoutes);
