@@ -2,15 +2,19 @@ import { Prisma } from "../../../prisma/src/generated/main/prisma/client";
 import { DatabaseClient, DatabaseScope } from "./types";
 
 const SCOPED_OPERATIONS = [
-    'findMany', 
-    'findFirst', 
-    'findUnique', 
+    'findMany',
+    'findFirst',
+    'findUnique',
     'findUniqueOrThrow',
-    'count', 
-    'update', 
-    'updateMany', 
-    'delete', 
+    'count',
+    'update',
+    'updateMany',
+    'delete',
     'deleteMany'
+] as const;
+
+const SCOPED_MODELS = [
+    'link_rel_tags'
 ] as const;
 
 export function createScopeExtension(filters: DatabaseScope) {
@@ -19,11 +23,14 @@ export function createScopeExtension(filters: DatabaseScope) {
             query: {
                 $allModels: {
                     async $allOperations({ model, operation, args, query }) {
+                        if (SCOPED_MODELS.includes(model as any)) {
+                            return query(args);
+                        }
                         if (SCOPED_OPERATIONS.includes(operation as any)) {
                             if ('where' in args) {
-                                args.where = { 
-                                    ...args.where, 
-                                    ...filters 
+                                args.where = {
+                                    ...args.where,
+                                    ...filters
                                 } as any;
                             }
                         }

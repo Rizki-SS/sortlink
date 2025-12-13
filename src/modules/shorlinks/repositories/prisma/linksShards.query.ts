@@ -22,9 +22,10 @@ export class LinkShardsQuery {
         };
     }
 
-    async findById(id: string) {
+    async findById(id: string, options: any = {}) {
         return this.client.links_shards.findUnique({
-            where: { id }
+            where: { id },
+            ...options
         });
     }
 

@@ -18,7 +18,7 @@ class FolderUpdateController {
     }) {
         const folder = await this.folderMutate.updateById(params.id, {
             name: body.name,
-            parentId: body.parentId || null
+            parent: body.folderId ? { connect: { id: body.folderId } } : undefined
         });
 
         return successResponse(folder);

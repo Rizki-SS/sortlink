@@ -19,5 +19,12 @@ export type LinkUpdate = typeof LinkUpdateSchema;
 
 export {
     LinkCreationSchema,
-    LinkUpdateSchema
+    LinkUpdateSchema,
+    LinkTagSchema,
 };
+
+const LinkTagSchema = t.Object({
+    tagName: t.String()
+});
+
+export type LinkTag = typeof LinkTagSchema;
