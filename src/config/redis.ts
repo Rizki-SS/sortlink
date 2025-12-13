@@ -1,5 +1,4 @@
 import { Redis } from "ioredis";
-import Cache from "ioredis-cache";
 
 const redisConfig = {
     host: process.env.REDIS_HOST || 'localhost',

@@ -6,6 +6,7 @@ import { enableBigIntSerialization } from "./libs/utils/bigint.serializer";
 import { errorHandler } from "./libs/http/error-handler";
 import defaultMiddleware from "./middleware";
 import loader from "./loader";
+import { sortlinkHandler } from "@/shorlinks/controllers/main.controller";
 
 // Enable global BigInt serialization
 enableBigIntSerialization();
@@ -21,6 +22,7 @@ const app = new Elysia()
     }
   }))
   .use(routes)
+  .use(sortlinkHandler)
   .all("*", ({ set, request }) => {
     set.status = 404;
     return {
