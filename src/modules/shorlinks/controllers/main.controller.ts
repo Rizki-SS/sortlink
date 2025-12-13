@@ -1,5 +1,5 @@
 import Elysia, { t } from "elysia";
-import { successResponse } from "@/libs/http/response";
+import { redirectionResponse, successResponse } from "@/libs/http/response";
 import { LinkShardsQuery } from "@/shorlinks/repositories/prisma/linksShards.query";
 import { LinkQuery } from "@/shorlinks/repositories/prisma/links.query";
 import AppStore from "@/libs/type/store.user";
@@ -15,7 +15,9 @@ class MainLinkController {
         params: { hash: string }
     }) {
         const service = this.repositoryFactory.createService(params.hash);
-        return service.handle(params);
+        const link = await service.handle(params);
+
+        return redirectionResponse(link);
     }
 }
 

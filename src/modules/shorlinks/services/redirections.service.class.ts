@@ -37,6 +37,6 @@ export class RedirectionService {
             throw new NotFoundError("Link not found");
         }
 
-        return redirectionResponse(link.url);
+        return link.url;
     }
 }
