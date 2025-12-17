@@ -26,4 +26,12 @@ export class DomainQuery {
             where: { id }
         });
     }
+
+    async findByDomain(domain: string) {
+        return this.client.domains.findUnique({
+            where: {
+                name: domain
+            }
+        });
+    }
 }

@@ -1,15 +1,19 @@
 import { NotFoundError } from "../../../types/errors";
 import { LinkShardsQuery } from "../repositories/prisma/linksShards.query";
 import { LinkQuery } from "../repositories/prisma/links.query";
-import { redirectionResponse } from "@/libs/http/response";
+import { redirectionResponse, successResponse } from "@/libs/http/response";
 import Redis from "ioredis";
+import { DomainQuery } from "../repositories/prisma/domains.query";
+import { LinkAction, utmRedirectAction } from "../actions/redirect";
+import { pipe } from "@/libs/utils/pipeline";
 
 export interface RedirectionServiceDependencies {
     linkQueryRepo: LinkQuery;
-    redisClient: Redis
+    redisClient: Redis,
+    domainQueryRepo: DomainQuery
 }
 
-const REDIS_CACHE_KEY = (hash: string) => `sortlink-cache-${hash}`;
+const REDIS_CACHE_KEY = (hash: string, domainId: string) => `sortlink-cache-${hash}-${domainId}`;
 
 type LinkFound = Awaited<ReturnType<LinkQuery["findByHash"]>>;
 
@@ -19,24 +23,35 @@ export class RedirectionService {
     ) { }
 
     async handle({
-        hash
+        hash,
+        domainId
     }: {
-        hash: string
+        hash: string,
+        domainId: string
     }) {
-        const cachedLink = await this.deps.redisClient.get(REDIS_CACHE_KEY(hash));
+        const cachedLink = await this.deps.redisClient.get(REDIS_CACHE_KEY(hash, domainId));
 
         let link: LinkFound | null = null;
         if (cachedLink) {
             link = JSON.parse(cachedLink) as LinkFound;
         } else {
-            link = await this.deps.linkQueryRepo.findByHash(hash)
-            await this.deps.redisClient.set(REDIS_CACHE_KEY(hash), JSON.stringify(link), 'EX', 3600);
+            const domain = await this.deps.domainQueryRepo.findByDomain(domainId);
+            if (!domain) {
+                throw new NotFoundError("Domain not found");
+            }
+
+            link = await this.deps.linkQueryRepo.findByHash(hash, domain.id)
+            await this.deps.redisClient.set(REDIS_CACHE_KEY(hash, domain.id), JSON.stringify(link), 'EX', 3600);
         }
 
         if (!link) {
             throw new NotFoundError("Link not found");
         }
 
-        return link.url;
+        const url = pipe(
+            utmRedirectAction,
+        )(link).url;
+
+        return redirectionResponse(url);
     }
 }

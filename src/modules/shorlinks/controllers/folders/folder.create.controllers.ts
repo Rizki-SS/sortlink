@@ -17,7 +17,7 @@ class FolderCreateController {
     }) {
         const folder = await this.folderMutate.create({
             name: body.name,
-            parentId: body.parentId || null,
+            parent: body.parentId || null,
             userId: store.user.sub,
             teamId: store.user.selected_teamId || null
         });

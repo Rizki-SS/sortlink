@@ -4,6 +4,7 @@ import { LinkQuery } from "../repositories/prisma/links.query";
 import { ConsistentHashFactory } from "../libs/hash";
 import { RedirectionService, RedirectionServiceDependencies } from "./redirections.service.class";
 import { redisClient } from "src/config/redis";
+import { DomainQuery } from "../repositories/prisma/domains.query";
 
 export class RedirectionServiceFactory {
     constructor(
@@ -20,7 +21,11 @@ export class RedirectionServiceFactory {
                 'links',
                 shard
             ),
-            redisClient: redisClient
+            redisClient: redisClient,
+            domainQueryRepo: this.repoFactory.createRepository(
+                DomainQuery,
+                'main'
+            )
         };
 
         return new RedirectionService(deps);

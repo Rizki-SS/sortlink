@@ -14,6 +14,7 @@
     "prisma-db-link-shard_2:migrate": "prisma migrate dev --config=./prisma/db.links/shard_2.prisma.config.ts"
   },
   "dependencies": {
+    "@elysiajs/openapi": "^1.4.11",
     "@prisma/adapter-pg": "^7.1.0",
     "@prisma/client": "^7.1.0",
     "crc-32": "^1.2.2",

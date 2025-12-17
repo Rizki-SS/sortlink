@@ -16,9 +16,9 @@ export class LinkQuery {
         });
     }
 
-    async findByHash(hash: string) {
+    async findByHash(hash: string, domainId: string) {
         return this.client.links.findUnique({
-            where: { hashId: hash },
+            where: { hashId: hash, domainId },
             include: {
                 link_utm: true,
                 link_geolocation: true,

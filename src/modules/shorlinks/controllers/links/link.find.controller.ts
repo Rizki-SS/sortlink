@@ -4,11 +4,12 @@ import { LinkShardsQuery } from "@/shorlinks/repositories/prisma/linksShards.que
 import { LinkQuery } from "@/shorlinks/repositories/prisma/links.query";
 import AppStore from "@/libs/type/store.user";
 import loader from "../../../../loader";
+import { RepositoryFactory } from "@/libs/databases/repository.factory";
 
 class LinkFindController {
     constructor(
         private linkMetaRepo: LinkShardsQuery,
-        private repositoryFactory: any
+        private repositoryFactory: RepositoryFactory
     ) {
 
     }
@@ -27,7 +28,6 @@ class LinkFindController {
                 folder: true
             }
         });
-
         if (!link) {
             throw new Error("Link not found");
         }
@@ -39,7 +39,7 @@ class LinkFindController {
             link.shardKey as string
         );
 
-        const fullLink = await linkRepo.findByHash(link.hashId);
+        const fullLink = await linkRepo.findByHash(link.hashId, link.domainId);
         return successResponse({
             ...link,
             detail: { ...fullLink }

@@ -15,4 +15,12 @@ export class UtmMutate {
             data
         });
     }
+
+    async updateOrCreate(linkId: number, data: Prisma.link_utmCreateInput) {
+        return this.client.link_utm.upsert({
+            where: { linkId: linkId },
+            create: data,
+            update: data
+        });
+    }
 }

@@ -15,6 +15,7 @@ import { folderFind } from "./controllers/folders/folder.find.controller";
 import { folderUpdate } from "./controllers/folders/folder.update.controller";
 import { folderDelete } from "./controllers/folders/folder.delete.controller";
 import { authMiddleware } from "src/middleware";
+import { updateUtm } from "./controllers/link-configurations/utm.controller";
 
 export const routes = new Elysia()
     .use(authMiddleware)
@@ -22,6 +23,9 @@ export const routes = new Elysia()
         app.use([linkGet, linkCreate, linkFind, linkUpdate, linkDelete])
             .group("/:id/tags", (tagApp) =>
                 tagApp.use([linkTagsAdd, linkTagsRemove])
+            )
+            .group("/:id", (utmApp) =>
+                utmApp.use([updateUtm])
             )
     )
     .group("/domains", (domainApp) =>

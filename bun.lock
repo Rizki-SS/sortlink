@@ -4,6 +4,7 @@
     "": {
       "name": "sortlink-service",
       "dependencies": {
+        "@elysiajs/openapi": "^1.4.11",
         "@prisma/adapter-pg": "^7.1.0",
         "@prisma/client": "^7.1.0",
         "crc-32": "^1.2.2",
@@ -34,6 +35,8 @@
     "@electric-sql/pglite-socket": ["@electric-sql/pglite-socket@0.0.6", "", { "peerDependencies": { "@electric-sql/pglite": "0.3.2" }, "bin": { "pglite-server": "dist/scripts/server.js" } }, "sha512-6RjmgzphIHIBA4NrMGJsjNWK4pu+bCWJlEWlwcxFTVY3WT86dFpKwbZaGWZV6C5Rd7sCk1Z0CI76QEfukLAUXw=="],
 
     "@electric-sql/pglite-tools": ["@electric-sql/pglite-tools@0.2.7", "", { "peerDependencies": { "@electric-sql/pglite": "0.3.2" } }, "sha512-9dAccClqxx4cZB+Ar9B+FZ5WgxDc/Xvl9DPrTWv+dYTf0YNubLzi4wHHRGRGhrJv15XwnyKcGOZAP1VXSneSUg=="],
+
+    "@elysiajs/openapi": ["@elysiajs/openapi@1.4.11", "", { "peerDependencies": { "elysia": ">= 1.4.0" } }, "sha512-d75bMxYJpN6qSDi/z9L1S7SLk1S/8Px+cTb3W2lrYzU8uQ5E0kXdy1oOMJEfTyVsz3OA19NP9KNxE7ztSbLBLg=="],
 
     "@hono/node-server": ["@hono/node-server@1.19.6", "", { "peerDependencies": { "hono": "^4" } }, "sha512-Shz/KjlIeAhfiuE93NDKVdZ7HdBVLQAfdbaXEaoAVO3ic9ibRSLGIQGkcBbFyuLr+7/1D5ZCINM8B+6IvXeMtw=="],
 

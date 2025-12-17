@@ -35,7 +35,7 @@ export class LinkService {
         const hash = input.hash || this.generateHash(input.url);
 
         // Check if hash already exists
-        const existingLink = await this.deps.linkShardQueryRepo.findByHash(hash);
+        const existingLink = await this.deps.linkShardQueryRepo.findByHash(hash, input.domainId);
         if (existingLink) {
             throw new ValidationError(`Hash ${hash} already exists`);
         }

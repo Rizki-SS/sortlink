@@ -29,9 +29,9 @@ export class LinkShardsQuery {
         });
     }
 
-    async findByHash(hash: string) {
+    async findByHash(hash: string, domainId: string) {
         return this.client.links_shards.findUnique({
-            where: { hashId: hash }
+            where: { hashId: hash, domainId }
         });
     }
 }
